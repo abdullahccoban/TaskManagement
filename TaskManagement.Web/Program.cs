@@ -1,7 +1,15 @@
+using TaskManagement.Core.Helpers;
+using TaskManagement.Data;
+using TaskManagement.Data.Context;
+
 var builder = WebApplication.CreateBuilder(args);
+
+AppSettingsHelper.Init(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDataServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -23,5 +31,12 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapPost("/users", async (User user, TaskManagementDbContext db) =>
+{
+    db.Users.Add(user);
+    await db.SaveChangesAsync();
+    return Results.Created($"/users/{user.Id}", user);
+});
 
 app.Run();

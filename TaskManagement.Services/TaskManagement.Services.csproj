@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TaskManagement.Data\TaskManagement.Data.csproj" />
     <ProjectReference Include="..\TaskManagement.Domain\TaskManagement.Domain.csproj" />
+    <ProjectReference Include="..\TaskManagement.Core\TaskManagement.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
