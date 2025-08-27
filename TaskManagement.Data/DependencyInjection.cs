@@ -15,6 +15,8 @@ namespace TaskManagement.Data
                 options.UseNpgsql(connectionString)
             );
 
+            services.AddScoped<IUserRepository, UserRepository>();
+
             return services;
         }        
     }
