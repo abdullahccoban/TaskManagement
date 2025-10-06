@@ -19,11 +19,13 @@ public partial class User
 
     public DateTime? LastLogin { get; set; }
 
-    public string Role { get; set; } = "User";
+    public string Role { get; set; } = null!;
 
     public virtual ICollection<GroupMember> GroupMembers { get; set; } = new List<GroupMember>();
 
     public virtual ICollection<GroupTask> GroupTasks { get; set; } = new List<GroupTask>();
 
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+    public virtual ICollection<UserRequest> UserRequests { get; set; } = new List<UserRequest>();
 }

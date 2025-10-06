@@ -27,6 +27,8 @@ public partial class TaskManagementDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserRequest> UserRequests { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=taskmanagement;Username=taskuser;Password=taskpass");
@@ -43,7 +45,6 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.HasOne(d => d.CreatedUser).WithMany(p => p.Groups)
                 .HasForeignKey(d => d.CreatedUserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Groups_CreatedUserId_fkey");
         });
 
@@ -53,9 +54,12 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.ToTable("GroupMembers", "taskmanagement");
 
+            entity.Property(e => e.Role)
+                .HasMaxLength(50)
+                .HasDefaultValueSql("'GroupUser'::character varying");
+
             entity.HasOne(d => d.Group).WithMany(p => p.GroupMembers)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("GroupMembers_GroupId_fkey");
 
             entity.HasOne(d => d.User).WithMany(p => p.GroupMembers)
@@ -72,17 +76,14 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.HasOne(d => d.Group).WithMany(p => p.GroupTasks)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("GroupTask_GroupId_fkey");
 
             entity.HasOne(d => d.Status).WithMany(p => p.GroupTasks)
                 .HasForeignKey(d => d.StatusId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("GroupTask_StatusId_fkey");
 
             entity.HasOne(d => d.Task).WithMany(p => p.GroupTasks)
                 .HasForeignKey(d => d.TaskId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("GroupTask_TaskId_fkey");
 
             entity.HasOne(d => d.User).WithMany(p => p.GroupTasks)
@@ -103,7 +104,6 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.HasOne(d => d.Group).WithMany(p => p.Statuses)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Statuses_GroupId_fkey");
         });
 
@@ -117,7 +117,6 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.HasOne(d => d.Group).WithMany(p => p.Tasks)
                 .HasForeignKey(d => d.GroupId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Tasks_GroupId_fkey");
         });
 
@@ -135,6 +134,23 @@ public partial class TaskManagementDbContext : DbContext
                 .HasMaxLength(50)
                 .HasDefaultValueSql("'User'::character varying");
             entity.Property(e => e.Username).HasMaxLength(150);
+        });
+
+        modelBuilder.Entity<UserRequest>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("UserRequests_pkey");
+
+            entity.ToTable("UserRequests", "taskmanagement");
+
+            entity.Property(e => e.Message).HasMaxLength(255);
+
+            entity.HasOne(d => d.Group).WithMany(p => p.UserRequests)
+                .HasForeignKey(d => d.GroupId)
+                .HasConstraintName("UserRequests_GroupId_fkey");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserRequests)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("UserRequests_UserId_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

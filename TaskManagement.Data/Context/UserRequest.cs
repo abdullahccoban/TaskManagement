@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TaskManagement.Data.Context;
 
-public partial class GroupMember
+public partial class UserRequest
 {
     public int Id { get; set; }
 
@@ -11,7 +11,7 @@ public partial class GroupMember
 
     public int UserId { get; set; }
 
-    public string Role { get; set; } = null!;
+    public string? Message { get; set; }
 
     public virtual Group Group { get; set; } = null!;
 

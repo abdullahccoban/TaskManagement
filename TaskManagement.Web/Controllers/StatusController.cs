@@ -14,6 +14,7 @@ public class StatusController : ControllerBase
         _statusService = statusService;
     }
 
+    [JwtAuthorize]
     [HttpPost("CreateStatus")]
     public async Task<IActionResult> CreateStatus([FromBody] StatusDto status)
     {
@@ -28,6 +29,7 @@ public class StatusController : ControllerBase
         }
     }
 
+    [JwtAuthorize]
     [HttpPost("UpdateStatus")]
     public async Task<IActionResult> UpdateStatus([FromBody] StatusDto status)
     {
@@ -42,6 +44,7 @@ public class StatusController : ControllerBase
         }
     }
 
+    [JwtAuthorize]
     [HttpPost("DeleteStatus")]
     public async Task<IActionResult> DeleteStatus([FromBody] int id)
     {

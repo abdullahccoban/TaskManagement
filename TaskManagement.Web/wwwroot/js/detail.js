@@ -97,3 +97,63 @@ async function deleteStatus(id) {
         location.reload();
     }
 }
+
+async function acceptGroupMember(userId, groupId) {
+    try {
+        const response = await fetch("/Group/AddGroupMember", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ userId, groupId })
+        });
+
+        if (response.status === 200) {
+            location.reload();
+        }
+    } catch (err) {
+        location.reload();
+    } finally {
+        location.reload();
+    }
+}
+
+async function removeGroupMember(id) {
+    try {
+        const response = await fetch("/Group/RemoveGroupMember", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(id)
+        });
+
+        if (response.status === 200) {
+            location.reload();
+        }
+    } catch (err) {
+        location.reload();
+    } finally {
+        location.reload();
+    }
+}
+
+async function declineGroupMember(userId, groupId) {
+    try {
+        const response = await fetch("/Group/RemoveRequest", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ userId, groupId })
+        });
+
+        if (response.status === 200) {
+            location.reload();
+        }
+    } catch (err) {
+        location.reload();
+    } finally {
+        location.reload();
+    }
+}

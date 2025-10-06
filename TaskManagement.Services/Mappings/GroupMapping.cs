@@ -17,6 +17,20 @@ public class GroupMapping : Profile
         CreateMap<GroupMemberDomain, GroupMember>()
             .ForMember(dest => dest.GroupId, opt => opt.MapFrom(src => src.GroupId))
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+        CreateMap<UserRequestDto, UserRequest>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => new User { Username = src.Username }))
+            .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.GroupId, opt => opt.MapFrom(src => src.GroupId))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+        CreateMap<UserRequest, UserRequestDto>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
+            .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.GroupId, opt => opt.MapFrom(src => src.GroupId))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
     }
 
 }

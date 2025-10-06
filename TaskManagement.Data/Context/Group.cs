@@ -20,4 +20,6 @@ public partial class Group
     public virtual ICollection<Status> Statuses { get; set; } = new List<Status>();
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+
+    public virtual ICollection<UserRequest> UserRequests { get; set; } = new List<UserRequest>();
 }

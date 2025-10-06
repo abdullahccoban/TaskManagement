@@ -1,22 +1,31 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using TaskManagement.Services;
 using TaskManagement.Web.Models;
 
 namespace TaskManagement.Web.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly IGroupService _groupService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(IGroupService groupService)
     {
-        _logger = logger;
+        _groupService = groupService;
     }
 
     [JwtAuthorize]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var groups = await _groupService.GetAllGroups();
+        
+        var userId = Convert.ToInt32(HttpContext.Items["UserId"]);
+        var myGroups = await _groupService.GetMyGroups(userId);
+
+        GroupViewModel viewModel = new GroupViewModel();
+        viewModel.Groups = groups;
+        viewModel.MyGroups = myGroups;
+        return View(viewModel);
     }
 
     public IActionResult Privacy()

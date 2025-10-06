@@ -38,6 +38,28 @@ public class GroupRepository : IGroupRepository
     public async Task<List<Group>> GetMyGroupsAsync(int id) 
         => await _context.Groups.Where(i => i.CreatedUserId == id).ToListAsync();
 
+    public async Task RemoveAsync(int id)
+    {
+        var group = await GetByIdAsync(id);
+
+        if (group != null)
+        {
+            _context.Groups.Remove(group);
+            await _context.SaveChangesAsync();
+        } 
+    }
+
+    public async Task RemoveGroupMembers(int id)
+    {
+        var groupMember = await _context.GroupMembers.FirstOrDefaultAsync(i => i.Id == id);
+
+        if (groupMember != null) 
+        {
+            _context.GroupMembers.Remove(groupMember);
+            await _context.SaveChangesAsync();
+        }
+    }
+
     public async Task<Group> UpdateAsync(Group group)
     {
         _context.Groups.Update(group);

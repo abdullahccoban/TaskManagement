@@ -9,11 +9,13 @@ namespace TaskManagement.Services;
 public class GroupService : IGroupService
 {
     private readonly IGroupRepository _repo;
+    private readonly IUserRequestRepository _userReqRepo;
     private readonly IMapper _mapper;
 
-    public GroupService(IGroupRepository repo, IMapper mapper)
+    public GroupService(IGroupRepository repo, IUserRequestRepository userReqRepo, IMapper mapper)
     {
         _repo = repo;
+        _userReqRepo = userReqRepo;
         _mapper = mapper;
     }
 
@@ -24,6 +26,12 @@ public class GroupService : IGroupService
 
         var memberDomain = new GroupMemberDomain(group.Id, userId, "GroupAdmin");
         await _repo.AddGroupMember(_mapper.Map<GroupMember>(memberDomain));
+    }
+
+    public async Task<List<GroupDto>> GetAllGroups()
+    {
+        var groups = await _repo.GetAllAsync();
+        return _mapper.Map<List<GroupDto>>(groups);
     }
 
     public async Task<GroupDto> GetGroupDetail(int id)
@@ -38,7 +46,7 @@ public class GroupService : IGroupService
 
         return groupMembers.Select(m => new GroupMemberDto
         {
-            Id = m.User.Id,
+            Id = m.Id,
             Username = m.User.Username,
             Email = m.User.Email,
             Role = m.Role
@@ -49,5 +57,45 @@ public class GroupService : IGroupService
     {
         var groups = await _repo.GetMyGroupsAsync(userId);
         return _mapper.Map<List<GroupDto>>(groups);
+    }
+
+    public async Task RemoveGroupAsync(int id)
+    {
+        await _repo.RemoveAsync(id);
+    }
+
+    public async Task UpdateGroupAsync(int id, string groupName, int userId)
+    {
+        var domain = new GroupDomain(groupName, userId, id);
+        await _repo.UpdateAsync(_mapper.Map<Group>(domain));
+    }
+
+    public async Task<List<UserRequestDto>> GetAllUserRequests(int groupId) 
+    {
+        var userRequests = await _userReqRepo.GetUserRequestsByGroupId(groupId);
+        return _mapper.Map<List<UserRequestDto>>(userRequests);
+    }
+
+    public async Task AddGroupMember(int groupId, int userId)
+    {
+        var memberDomain = new GroupMemberDomain(groupId, userId, "GroupUser");
+        await _repo.AddGroupMember(_mapper.Map<GroupMember>(memberDomain));
+        await RemoveRequest(groupId, userId);          
+    }
+
+    public async Task RemoveGroupMember(int id)
+    {
+        await _repo.RemoveGroupMembers(id);         
+    }
+
+    public async Task RemoveRequest(int groupId, int userId) 
+    {
+        var userReqs = await GetAllUserRequests(groupId);
+
+        if (userReqs != null)
+        {
+            var id = userReqs.FirstOrDefault(i => i.UserId == userId).Id;
+            await _userReqRepo.RemoveUserRequest(id);
+        }          
     }
 }
