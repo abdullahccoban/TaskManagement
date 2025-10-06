@@ -1,49 +1,107 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var username = Context.Items["Username"]?.ToString() ?? "Guest";
+    var email = Context.Items["Email"]?.ToString() ?? "";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TaskManagement.Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/TaskManagement.Web.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - TaskManagement</title>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
 </head>
-<body>
+<body class="h-full m-0 bg-gray-100">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TaskManagement.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        <nav class="bg-white border-gray-200">
+            <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                
+                <a href="/Home/Index" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <svg class="w-8 h-8 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.35709 16V5.78571c0-.43393.34822-.78571.77777-.78571H18.5793c.4296 0 .7778.35178.7778.78571V16M5.35709 16h-1c-.55229 0-1 .4477-1 1v1c0 .5523.44771 1 1 1H20.3571c.5523 0 1-.4477 1-1v-1c0-.5523-.4477-1-1-1h-1M5.35709 16H19.3571M9.35709 8l2.62501 2.5L9.35709 13m4.00001 0h2"/>
+                    </svg>
+                    <span class="self-center text-2xl font-semibold whitespace-nowrap">Task Management</span>
+                </a>
+
+                @if(User.Identity.IsAuthenticated) {
+                    <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                        <button type="button" class="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                            <span class="sr-only">Open user menu</span>
+                            <svg class="w-8 h-8 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0 0a8.949 8.949 0 0 0 4.951-1.488A3.987 3.987 0 0 0 13 16h-2a3.987 3.987 0 0 0-3.951 3.512A8.948 8.948 0 0 0 12 21Zm3-11a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                            </svg>
+                        </button>
+                        <!-- Dropdown menu -->
+                        <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm" id="user-dropdown">
+                            <div class="px-4 py-3">
+                                <span class="block text-sm text-gray-900">@username</span>
+                                <span class="block text-sm  text-gray-500 truncate">@email</span>
+                            </div>
+                            <ul class="py-2" aria-labelledby="user-menu-button">
+                                <li>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                </li>
+                                <li>
+                                    <a href="/Account/Logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <button data-collapse-toggle="navbar-user" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-user" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
+                        <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
+                            <li>
+                                <a href="/Home/Index" class="block py-2 px-3 bg-blue-700 rounded-sm md:bg-transparent md:p-0 @IsActive("Home", "Index")">Home</a>
+                            </li>
+                            <li>
+                                <a href="/Group/Index" class="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:p-0 @IsActive("Group", "Index")">Groups</a>
+                            </li>
+                        </ul>
+                    </div>
+                } else {
+                    <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
+                        <li>
+                            <a href="/Account/Login" class="block py-2 px-3 bg-blue-700 rounded-sm md:bg-transparent md:hover:text-blue-700 md:p-0 @IsActive("Account", "Login")">Login</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li>
+                            <a href="/Account/Register" class="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 @IsActive("Account", "Register")">Register</a>
                         </li>
                     </ul>
-                </div>
+                }
+            
             </div>
         </nav>
+
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <div class="flex-1 w-full">
+        <main role="main" class="max-w-screen-xl mx-auto p-4">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - TaskManagement.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    <footer class="hidden">
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+@functions {
+    string IsActive(string controller, string action)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        return (controller == currentController && action == currentAction) ? "font-bold text-gray-900" : "text-gray-400";
+    }
+}

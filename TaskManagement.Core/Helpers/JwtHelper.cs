@@ -8,7 +8,7 @@ namespace TaskManagement.Core;
 
 public static class JwtHelper
 {
-    public static string GenerateJwtToken(int userId, string email, IConfiguration config)
+    public static string GenerateJwtToken(int userId, string email, string username, IConfiguration config)
     {
         var jwtSection = config.GetSection("Jwt");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]));
@@ -18,7 +18,8 @@ public static class JwtHelper
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("Name", username)
         };
 
         var token = new JwtSecurityToken(

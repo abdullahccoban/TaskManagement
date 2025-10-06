@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm mx-auto">
+    <div class="text-xl text-center font-bold mb-6">
+        <p>Login Page</p>
+    </div>
+    <form id="loginForm" class="max-w-sm mx-auto">
+        <div class="mb-5">
+            <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="email" required />
+        </div>
+        <div class="mb-5">
+            <input type="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="password" required />
+        </div>
+        <div id="loginError" class="text-center mb-5 hidden">
+            <p class="text-sm font-bold text-red-600">Invalid Login</p>
+        </div>
+        <div class="text-center">
+            <button id="loginButton" type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Login</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/login.js"></script>
+}

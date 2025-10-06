@@ -55,7 +55,7 @@ public class UserService : IUserService
         user.LastLogin = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
         await _repo.UpdateAsync(user);
 
-        return JwtHelper.GenerateJwtToken(user.Id, user.Email, _config);
+        return JwtHelper.GenerateJwtToken(user.Id, user.Email, user.Username, _config);
     }
 
     public async Task<UserDto> RegisterAsync(string name, string email, string password)

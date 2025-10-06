@@ -33,8 +33,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var login = await _userService.LoginAsync(request.Email, request.Password);
-            return Ok(login);
+            var token = await _userService.LoginAsync(request.Email, request.Password);
+            return Ok(token);
         }
         catch (Exception ex)
         {

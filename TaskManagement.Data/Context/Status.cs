@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace TaskManagement.Data.Context;
 
-public partial class Task
+public partial class Status
 {
     public int Id { get; set; }
 
-    public string Title { get; set; } = null!;
-
-    public string? Desc { get; set; }
+    public string Status1 { get; set; } = null!;
 
     public int GroupId { get; set; }
 
