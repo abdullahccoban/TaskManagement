@@ -42,12 +42,14 @@ public class GroupController : Controller
     }
 
     [JwtAuthorize]
-    public async Task<IActionResult> Detail(int id)
+    [GroupAuthorize("GroupAdmin")]
+    [Route("Group/Detail/{groupId:int}")]
+    public async Task<IActionResult> Detail(int groupId)
     {
-        var groupDetail = await _groupService.GetGroupDetail(id);
-        var members = await _groupService.GetGroupMembers(id);
-        var statuses = await _statusService.GetStatuses(id);
-        var userReqs = await _groupService.GetAllUserRequests(id);
+        var groupDetail = await _groupService.GetGroupDetail(groupId);
+        var members = await _groupService.GetGroupMembers(groupId);
+        var statuses = await _statusService.GetStatuses(groupId);
+        var userReqs = await _groupService.GetAllUserRequests(groupId);
         GroupViewModel viewModel = new GroupViewModel();
         viewModel.GroupDetail = groupDetail;
         viewModel.GroupMembers = members;
@@ -109,6 +111,22 @@ public class GroupController : Controller
         try
         {
             await _groupService.RemoveGroupMember(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [JwtAuthorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateRequest([FromBody] UserRequestDto userRequest) 
+    {
+        try
+        {
+            var userId = Convert.ToInt32(HttpContext.Items["UserId"]);
+            await _groupService.CreateRequest(userRequest.GroupId, userId, userRequest.Message);
             return Ok();
         }
         catch (Exception ex)

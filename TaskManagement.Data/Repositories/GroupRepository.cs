@@ -66,4 +66,10 @@ public class GroupRepository : IGroupRepository
         await _context.SaveChangesAsync();
         return group;
     }
+
+    public async Task<List<Group>> GetGroupsJoined(int id)
+        => await  _context.Groups.Where(g => _context.GroupMembers.Any(gm => gm.GroupId == g.Id && gm.UserId == id && gm.Role == "GroupUser")).ToListAsync();
+
+    public async Task<List<Group>> GetGroupsNotJoined(int id)
+        => await _context.Groups.Where(g => !_context.GroupMembers.Any(gm => gm.GroupId == g.Id && gm.UserId == id)).ToListAsync();
 }

@@ -59,6 +59,18 @@ public class GroupService : IGroupService
         return _mapper.Map<List<GroupDto>>(groups);
     }
 
+    public async Task<List<GroupDto>> GetNotJoinedGroups(int userId)
+    {
+        var groups = await _repo.GetGroupsNotJoined(userId);
+        return _mapper.Map<List<GroupDto>>(groups);
+    }  
+
+    public async Task<List<GroupDto>> GetJoinedGroups(int userId)
+    {
+        var groups = await _repo.GetGroupsJoined(userId);
+        return _mapper.Map<List<GroupDto>>(groups);
+    } 
+
     public async Task RemoveGroupAsync(int id)
     {
         await _repo.RemoveAsync(id);
@@ -87,6 +99,12 @@ public class GroupService : IGroupService
     {
         await _repo.RemoveGroupMembers(id);         
     }
+
+    public async Task CreateRequest(int groupId, int userId, string? message)
+    {
+        var requestDomain = new UserRequestDomain(userId, groupId, message);
+        await _userReqRepo.CreateUserRequest(_mapper.Map<UserRequest>(requestDomain));
+    }  
 
     public async Task RemoveRequest(int groupId, int userId) 
     {

@@ -31,6 +31,8 @@ public class GroupMapping : Profile
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.GroupId, opt => opt.MapFrom(src => src.GroupId))
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+        CreateMap<UserRequestDomain, UserRequest>();
     }
 
 }

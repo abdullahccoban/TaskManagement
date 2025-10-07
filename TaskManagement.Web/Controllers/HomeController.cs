@@ -16,15 +16,17 @@ public class HomeController : Controller
 
     [JwtAuthorize]
     public async Task<IActionResult> Index()
-    {
-        var groups = await _groupService.GetAllGroups();
-        
+    {       
         var userId = Convert.ToInt32(HttpContext.Items["UserId"]);
+        
         var myGroups = await _groupService.GetMyGroups(userId);
+        var joinedGroups = await _groupService.GetJoinedGroups(userId);
+        var notJoinedGroups = await _groupService.GetNotJoinedGroups(userId);
 
         GroupViewModel viewModel = new GroupViewModel();
-        viewModel.Groups = groups;
+        viewModel.JoinedGroups = joinedGroups;
         viewModel.MyGroups = myGroups;
+        viewModel.NotJoinedGroups = notJoinedGroups;
         return View(viewModel);
     }
 

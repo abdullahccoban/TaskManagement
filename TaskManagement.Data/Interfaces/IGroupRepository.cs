@@ -14,4 +14,6 @@ public interface IGroupRepository
     Task AddGroupMember(GroupMember groupMember);
     Task<List<GroupMember>> GetGroupMembers(int groupId);
     Task RemoveGroupMembers(int id);
+    Task<List<Group>> GetGroupsNotJoined(int id);
+    Task<List<Group>> GetGroupsJoined(int id);
 }
