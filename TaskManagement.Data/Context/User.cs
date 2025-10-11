@@ -23,9 +23,9 @@ public partial class User
 
     public virtual ICollection<GroupMember> GroupMembers { get; set; } = new List<GroupMember>();
 
-    public virtual ICollection<GroupTask> GroupTasks { get; set; } = new List<GroupTask>();
-
     public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+
+    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 
     public virtual ICollection<UserRequest> UserRequests { get; set; } = new List<UserRequest>();
 }

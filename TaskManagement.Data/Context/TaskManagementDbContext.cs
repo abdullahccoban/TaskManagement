@@ -19,8 +19,6 @@ public partial class TaskManagementDbContext : DbContext
 
     public virtual DbSet<GroupMember> GroupMembers { get; set; }
 
-    public virtual DbSet<GroupTask> GroupTasks { get; set; }
-
     public virtual DbSet<Status> Statuses { get; set; }
 
     public virtual DbSet<Task> Tasks { get; set; }
@@ -54,6 +52,12 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.ToTable("GroupMembers", "taskmanagement");
 
+            entity.HasIndex(e => e.GroupId, "idx_groupmembers_group");
+
+            entity.HasIndex(e => new { e.GroupId, e.UserId }, "idx_groupmembers_group_user").IsUnique();
+
+            entity.HasIndex(e => e.UserId, "idx_groupmembers_user");
+
             entity.Property(e => e.Role)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("'GroupUser'::character varying");
@@ -64,32 +68,7 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.GroupMembers)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("GroupMembers_UserId_fkey");
-        });
-
-        modelBuilder.Entity<GroupTask>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("GroupTask_pkey");
-
-            entity.ToTable("GroupTask", "taskmanagement");
-
-            entity.HasOne(d => d.Group).WithMany(p => p.GroupTasks)
-                .HasForeignKey(d => d.GroupId)
-                .HasConstraintName("GroupTask_GroupId_fkey");
-
-            entity.HasOne(d => d.Status).WithMany(p => p.GroupTasks)
-                .HasForeignKey(d => d.StatusId)
-                .HasConstraintName("GroupTask_StatusId_fkey");
-
-            entity.HasOne(d => d.Task).WithMany(p => p.GroupTasks)
-                .HasForeignKey(d => d.TaskId)
-                .HasConstraintName("GroupTask_TaskId_fkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.GroupTasks)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("GroupTask_UserId_fkey");
         });
 
         modelBuilder.Entity<Status>(entity =>
@@ -113,11 +92,21 @@ public partial class TaskManagementDbContext : DbContext
 
             entity.ToTable("Tasks", "taskmanagement");
 
+            entity.Property(e => e.GroupTaskNumber).HasDefaultValue(0);
+            entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.Title).HasMaxLength(200);
 
             entity.HasOne(d => d.Group).WithMany(p => p.Tasks)
                 .HasForeignKey(d => d.GroupId)
                 .HasConstraintName("Tasks_GroupId_fkey");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.Tasks)
+                .HasForeignKey(d => d.StatusId)
+                .HasConstraintName("Tasks_StatusId_fkey");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Tasks)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("Tasks_UserId_fkey");
         });
 
         modelBuilder.Entity<User>(entity =>

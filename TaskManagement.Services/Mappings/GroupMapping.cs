@@ -18,6 +18,10 @@ public class GroupMapping : Profile
             .ForMember(dest => dest.GroupId, opt => opt.MapFrom(src => src.GroupId))
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
+        CreateMap<GroupMember, GroupMemberDto>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id));
+
         CreateMap<UserRequestDto, UserRequest>()
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => new User { Username = src.Username }))
             .ForMember(dest => dest.Message, opt => opt.MapFrom(src => src.Message))

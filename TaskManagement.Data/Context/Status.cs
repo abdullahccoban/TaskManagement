@@ -13,5 +13,5 @@ public partial class Status
 
     public virtual Group Group { get; set; } = null!;
 
-    public virtual ICollection<GroupTask> GroupTasks { get; set; } = new List<GroupTask>();
+    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 }

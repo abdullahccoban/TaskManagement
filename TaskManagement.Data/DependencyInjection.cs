@@ -19,6 +19,7 @@ namespace TaskManagement.Data
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IUserRequestRepository, UserRequestRepository>();
+            services.AddScoped<ITaskRepository, TaskRepository>();
 
             return services;
         }        

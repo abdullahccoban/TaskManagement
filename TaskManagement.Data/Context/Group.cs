@@ -15,8 +15,6 @@ public partial class Group
 
     public virtual ICollection<GroupMember> GroupMembers { get; set; } = new List<GroupMember>();
 
-    public virtual ICollection<GroupTask> GroupTasks { get; set; } = new List<GroupTask>();
-
     public virtual ICollection<Status> Statuses { get; set; } = new List<Status>();
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();

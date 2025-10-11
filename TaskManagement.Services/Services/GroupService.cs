@@ -43,14 +43,7 @@ public class GroupService : IGroupService
     public async Task<List<GroupMemberDto>> GetGroupMembers(int groupId)
     {
         var groupMembers = await _repo.GetGroupMembers(groupId);
-
-        return groupMembers.Select(m => new GroupMemberDto
-        {
-            Id = m.Id,
-            Username = m.User.Username,
-            Email = m.User.Email,
-            Role = m.Role
-        }).ToList();
+        return _mapper.Map<List<GroupMemberDto>>(groupMembers);
     }
 
     public async Task<List<GroupDto>> GetMyGroups(int userId)

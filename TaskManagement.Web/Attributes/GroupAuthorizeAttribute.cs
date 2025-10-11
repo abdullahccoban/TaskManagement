@@ -33,6 +33,7 @@ public class GroupAuthorizeAttribute : Attribute, IAsyncActionFilter
             return;
         }
 
+        context.HttpContext.Items["GroupRole"] = member.Role;
         await next();
     }
 }
