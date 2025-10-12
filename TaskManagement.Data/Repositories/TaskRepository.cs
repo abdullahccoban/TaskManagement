@@ -24,8 +24,8 @@ public class TaskRepository : ITaskRepository
         await _context.SaveChangesAsync();
     }
 
-    public async System.Threading.Tasks.Task<List<Context.Task>?> GetTasks(int groupId)
-        => await _context.Tasks.Include(t => t.Group).Include(u => u.User).Include(s => s.Status).Where(i => i.GroupId == groupId).ToListAsync();
+    public async System.Threading.Tasks.Task<List<Context.Task>?> GetTasks(int groupId, int skip, int take, bool pagination = true)
+        => pagination == true ? await _context.Tasks.Where(i => i.GroupId == groupId && i.IsDeleted == false).Include(t => t.Group).Include(u => u.User).Include(s => s.Status).OrderByDescending(t => t.Id).Skip(skip).Take(take).ToListAsync() : await _context.Tasks.Where(i => i.GroupId == groupId && i.IsDeleted == false).Include(t => t.Group).Include(u => u.User).Include(s => s.Status).OrderByDescending(t => t.Id).ToListAsync();
 
     public async System.Threading.Tasks.Task<Context.Task?> GetTaskById(int id)
         => await _context.Tasks.Include(t => t.Group).Include(u => u.User).Include(s => s.Status).Where(i => i.Id == id).FirstOrDefaultAsync();
@@ -45,7 +45,7 @@ public class TaskRepository : ITaskRepository
     }
 
     public async System.Threading.Tasks.Task<List<Context.Task>?> GetMyTasks(int userId)
-        => await _context.Tasks.Include(t => t.Group).Include(u => u.User).Include(s => s.Status).Where(i => i.UserId == userId).ToListAsync();
+        => await _context.Tasks.Include(t => t.Group).Include(u => u.User).Include(s => s.Status).Where(i => i.UserId == userId && i.IsDeleted == false).ToListAsync();
 
     public async System.Threading.Tasks.Task<int> GetMaxTaskNumber(int groupId)
         => await _context.Tasks.Include(t => t.Group).Include(u => u.User).Include(s => s.Status).Where(t => t.GroupId == groupId).MaxAsync(t => (int?)t.GroupTaskNumber) ?? 0;

@@ -60,6 +60,14 @@ public class TaskDomain
         StatusId = statusId;
     }
 
+    public void UpdateUser(int userId)
+    {
+        if (userId <= 0)
+            throw new ArgumentException("Task için geçerli bir user seçilmelidir");
+
+        UserId = userId;
+    }
+
     public void SoftDelete()
     {
         IsDeleted = true;

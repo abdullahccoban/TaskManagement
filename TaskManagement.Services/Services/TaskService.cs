@@ -74,15 +74,30 @@ public class TaskService : ITaskService
         await _repo.UpdateTask(task);
     }
 
+    public async System.Threading.Tasks.Task UpdateTaskUserAsync(int id, int userId)
+    {
+        var task = await _repo.GetTaskById(id);
+
+        if(task == null)
+            throw new KeyNotFoundException("Task bulunamadı.");
+
+        var domain = _mapper.Map<TaskDomain>(task);
+        domain.UpdateUser(userId);
+
+        task.UserId = domain.UserId;      
+
+        await _repo.UpdateTask(task);
+    }
+
     public async System.Threading.Tasks.Task<TaskDto> GetTaskByIdAsync(int id)
     {
         var task = await _repo.GetTaskById(id);
         return _mapper.Map<TaskDto>(task);
     }
 
-    public async System.Threading.Tasks.Task<List<TaskDto>> GetGroupTasksAsync(int groupId)
+    public async System.Threading.Tasks.Task<List<TaskDto>> GetGroupTasksAsync(int groupId, int skip, int take, bool pagination = true)
     {
-        var tasks = await _repo.GetTasks(groupId);
+        var tasks = await _repo.GetTasks(groupId, skip, take, pagination);
         return _mapper.Map<List<TaskDto>>(tasks);
     }
 

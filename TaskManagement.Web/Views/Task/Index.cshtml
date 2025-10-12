@@ -4,6 +4,8 @@
     var role = Context.Items["GroupRole"];
 }
 
+<input class="hidden" id="user_role" value="@role"/>
+
 <div class="flex justify-between items-center">
     <nav class="flex" aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
@@ -33,70 +35,140 @@
     }    
 </div>
 
-@if (Model.GroupTasks != null && Model.GroupTasks.Count != 0) {
-    <div class="relative overflow-x-auto">
-        <table class="w-full text-sm text-center text-gray-500">
-            <thead class="text-xs text-gray-900 uppercase">
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Task No
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Title
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Status
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Assigned User
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                    </th>
-                </tr>
-            </thead>
+<div class="my-5 p-4 rounded-lg bg-gray-50">
+    <kbd class="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg"><a href="/Task/Board/@Model.GroupDetails.Id" class="hover:text-blue-700">Board View</a></kbd>
+    <div class="p-4 rounded-lg bg-gray-50">
+        @if (Model.GroupTasks != null && Model.GroupTasks.Count != 0) {
+            <div class="relative my-5">
+                <table class="w-full text-sm text-center text-gray-500">
+                    <thead class="text-xs text-white bg-gray-900 uppercase">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Task No
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Title
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Description
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Status
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Assigned User
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                            </th>
+                        </tr>
+                    </thead>
 
-            <tbody>
-                @foreach(var task in Model.GroupTasks.OrderByDescending(i => i.Id)) {
-                    <tr class="bg-white">
-                        <td class="px-6 py-4 text-xs font-bold text-gray-600">
-                            @task.DisplayTaskCode
-                        </td>
-                        <td class="px-6 py-4">
-                            <button data-popover-target="@task.DisplayTaskCode" data-popover-placement="top" type="button" class="text-gray-900 mb-3 me-4 font-bold rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer">
-                                @task.Title
-                            </button>
-                            <div data-popover id="@task.DisplayTaskCode" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0">
-                                <div class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg">
-                                    <h3 class="font-semibold text-gray-900">@task.Title</h3>
-                                </div>
-                                <div class="px-3 py-2">
-                                    <p class="text-xs font-bold">@task.Desc</p>
-                                </div>
-                                <div data-popper-arrow></div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-xs font-bold">
-                            @task.StatusName
-                        </td>
-                        <td class="px-6 py-4">
-                            @task.Username
-                        </td>                        
-                        <td>
-                            @if(role?.ToString() == "GroupAdmin") {
-                                <button type="button" class="text-white bg-gray-700 hover:bg-red-800 rounded-full text-xs px-1.5 py-0.5 text-center" onclick="">
-                                        delete
-                                </button>
-                            }
-                        </td>
-                    </tr>
+                    <tbody id="tBodyAllTasks">
+                        @foreach(var task in Model.GroupTasks.OrderByDescending(i => i.Id)) {
+                            <tr class="odd:bg-white even:bg-gray-50">
+                                <td class="px-6 py-4 text-xs font-bold text-gray-600">
+                                    @task.DisplayTaskCode
+                                </td>
+                                <td class="px-6 py-4">
+                                    @task.Title
+                                </td>
+                                <td class="px-6 py-4">
+                                    @task.Desc
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div id="div_status_@task.Id" class="flex justify-center items-center">
+                                        <p id="task_status_name_@task.Id" class="text-xs font-bold">@task.StatusName</p>
+                                        <a class="mx-1" onclick="openStatusEdit(@task.Id)">
+                                            <svg class="w-5 h-5 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <div id="div_edit_status_@task.Id" class="hidden flex items-center">
+                                        <select id="status2_@task.Id" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1">
+                                            @if(Model.Statuses != null) {
+                                                @foreach(var status in Model.Statuses) {
+                                                    if(status.Id == task.StatusId) {
+                                                        <option selected value="@status.Id">@status.Status</option>
+                                                    } else {
+                                                        <option value="@status.Id">@status.Status</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                        <a class="mx-1" onclick="saveStatusEdit(@task.Id)">
+                                            <svg class="w-5 h-5 text-green-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                            </svg>
+                                        </a>
+                                        <p id="statusUpdateText_@task.Id" class="text-green-600 font-bold text-xs"></p>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div id="div_user_@task.Id" class="flex justify-center items-center">
+                                        <p id="task_user_name_@task.Id" class="text-xs font-bold">@task.Username</p>
+                                        @if(role?.ToString() == "GroupAdmin") {
+                                            <a class="mx-1" onclick="openUserEdit(@task.Id)">
+                                                <svg class="w-5 h-5 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                                                </svg>
+                                            </a>
+                                        }
+                                    </div>
+                                    <div id="div_edit_user_@task.Id" class="hidden flex items-center">
+                                        <select id="assignedUser2_@task.Id" class="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1">
+                                            @if(Model.GroupMembers != null) {
+                                                @foreach(var member in Model.GroupMembers) {
+                                                    if(member.UserId == task.UserId) {
+                                                        <option selected value="@member.UserId">@member.Username</option>
+                                                    } else {
+                                                        <option value="@member.UserId">@member.Username</option>
+                                                    }                                                    
+                                                }
+                                            }
+                                        </select>
+                                        <a class="mx-1" onclick="saveUserEdit(@task.Id)">
+                                            <svg class="w-5 h-5 text-green-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                            </svg>
+                                        </a>
+                                        <p id="userUpdateText_@task.Id" class="text-green-600 font-bold text-xs"></p>
+                                    </div>
+                                </td>                        
+                                <td>
+                                    @if(role?.ToString() == "GroupAdmin") {
+                                        <button type="button" class="text-white bg-gray-700 hover:bg-red-800 rounded-full text-xs px-1.5 py-0.5 text-center" onclick="softDeleteTask(@task.Id)">
+                                                delete
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+                @if(Model.GroupTasks.Count == 10) {
+                    <div id="loadMoreButton" class="text-center mt-5">
+                        <a onclick="loadMoreTasks(@Model.GroupDetails.Id)" class="cursor-pointer font-bold text-xs text-gray-500 border border-2 border-gray-300 p-3 rounded-lg">Load More...</a>
+                    </div>
                 }
-            </tbody>
+                
 
-        </table>
-    </div>
-}
-
-
+            </div>
+        } else {
+            <div class="flex items-center p-4 my-4 text-sm text-gray-900 rounded-lg bg-gray-200" role="alert">
+                <svg class="shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                </svg>
+                <span class="sr-only">Info</span>
+                <div>
+                    There is no task for this group.
+                </div>
+            </div>
+        }     
+    </div> 
+</div>
 
 <!-- Main modal -->
 <div id="crud-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -155,7 +227,13 @@
             </form>
         </div>
     </div>
-</div> 
+</div>
+
+<script>
+    window.statuses = @Html.Raw(Json.Serialize(Model.Statuses));
+    window.groupMembers = @Html.Raw(Json.Serialize(Model.GroupMembers));
+    window.userRole = "@role";
+</script>
 
 @section Scripts {
     <script src="~/js/task.js"></script>
